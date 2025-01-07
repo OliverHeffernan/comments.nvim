@@ -11,11 +11,8 @@ local function check_comment(str, type)
 		--end
 	end
 	vim.notify(trimmed:sub(1, #commentMarker))
-	if trimmed:sub(1, #commentMarker) == commentMarker then
-		return true
-	else
-		return false
-	end
+	vim.notify(#commentMarker)
+	return trimmed:sub(1, #commentMarker) == commentMarker
 end
 
 local function comment_based_on_context()
