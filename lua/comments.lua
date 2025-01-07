@@ -24,9 +24,21 @@ end
 
 local function cssComment(commented)
 	if commented then
-		vim.cmd("normal! A*/")
+		vim.cmd("normal! ^xx")
+		vim.cmd("normal! $xx")
 	else
 		vim.cmd("normal! I/*")
+		vim.cmd("normal! A*/")
+	end
+end
+
+local function htmlComment(commented)
+	if commented then
+		vim.cmd("normal! ^4x")
+		vim.cmd("normal! $3x")
+	else
+		vim.cmd("normal! I<!--")
+		vim.cmd("normal! A-->')
 	end
 end
 
@@ -65,6 +77,7 @@ local function comment_based_on_context()
 				local type = "html"
 				if string.find(syntax_name, "html") then
 					type = "html"
+					htmlComment(check_comment(line, type))
 				elseif string.find(syntax_name, "javaScript") then
 					type = "javaScript"
 					javaScriptComment(check_comment(line, type))
@@ -72,11 +85,7 @@ local function comment_based_on_context()
 					type = "css"
 					cssComment(check_comment(line, type))
 				else
-					if check_comment(line, type) then
-						vim.cmd("normal! I<!--")
-						vim.cmd("normal! A-->")
-						vim.fn.setpos('.', save_pos)
-					end
+					htmlComment(check_comment(line, type))
 				end
 			end,
 			javaScript = function()
@@ -90,6 +99,8 @@ local function comment_based_on_context()
 		if filetype_action[filetype] then
 			filetype_action[filetype]()
 		end
+
+		vim.fn.setpos('.', save_pos)
 	end
 end
 
