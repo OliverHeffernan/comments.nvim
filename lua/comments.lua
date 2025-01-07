@@ -22,6 +22,7 @@ local function comment_based_on_context()
 		local syntax_name = (#syntax == 0) and "" or vim.fn.synIDattr(syntax[#syntax], "name")
 		local filetype = vim.bo.filetype
 		vim.notify(filetype)
+		vim.notify(syntax_name)
 		local line = vim.fn.getline(".")
 
 		local filetype_action = {
@@ -41,8 +42,14 @@ local function comment_based_on_context()
 					vim.cmd("normal! A-->")
 					vim.fn.setpos('.', save_pos)
 				end
+			end,
+			html = function()
+				if check_comment(line, "html") then
+					vim.cmd("normal! I<!--")
+					vim.cmd("normal! A-->")
+					vim.fn.setpos('.', save_pos)
+				end
 			end
-
 		}
 
 		if filetype_action[filetype] then
