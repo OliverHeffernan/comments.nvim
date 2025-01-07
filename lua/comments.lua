@@ -67,10 +67,10 @@ local function comment_based_on_context()
 					type = "html"
 				elseif syntax_name.find("javaScript") then
 					type = "javaScript"
-					javaScriptComment(check_comment(line, type)
+					javaScriptComment(check_comment(line, type))
 				elseif syntax_name.find("css") then
 					type = "css"
-					cssComment(check_comment(line, type)
+					cssComment(check_comment(line, type))
 				else
 					if check_comment(line, type) then
 						vim.cmd("normal! I<!--")
