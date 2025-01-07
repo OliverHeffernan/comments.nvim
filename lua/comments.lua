@@ -5,11 +5,29 @@ local function check_comment(str, type)
 		commentMarker = "--"
 	elseif type == "html" then
 		commentMarker = "<!--"
+	elseif type == "css" then
+		commentMarker = "/*"
 	end
 	--vim.notify("'" .. trimmed:sub(1, #commentMarker) .. "'")
 	--vim.notify(tostring(#commentMarker))
 	--vim.notify("'" .. commentMarker .. "'")
 	return trimmed:sub(1, #commentMarker) == commentMarker
+end
+
+local function javaScriptComment(commented)
+	if commented then
+		vim.cmd("normal! ^xx")
+	else
+		vim.cmd("normal! I//")
+	end
+end
+
+local function cssComment(commented)
+	if commented then
+		vim.cmd("normal! A*/")
+	else
+		vim.cmd("normal! I/*")
+	end
 end
 
 local function comment_based_on_context()
@@ -44,11 +62,28 @@ local function comment_based_on_context()
 				end
 			end,
 			html = function()
-				if check_comment(line, "html") then
-					vim.cmd("normal! I<!--")
-					vim.cmd("normal! A-->")
-					vim.fn.setpos('.', save_pos)
+				local type = "html"
+				if syntax_name.find("html") then
+					type = "html"
+				elseif syntax_name.find("javaScript") then
+					type = "javaScript"
+					javaScriptComment(check_comment(line, type)
+				elseif syntax_name.find("css") then
+					type = "css"
+					cssComment(check_comment(line, type)
+				else
+					if check_comment(line, type) then
+						vim.cmd("normal! I<!--")
+						vim.cmd("normal! A-->")
+						vim.fn.setpos('.', save_pos)
+					end
 				end
+			end,
+			javaScript = function()
+				javaScriptComment(check_comment(line, "javaScript"))
+			end
+			css = function()
+				cssComment(check_comment(line, "css"))
 			end
 		}
 
