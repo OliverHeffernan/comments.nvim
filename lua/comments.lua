@@ -34,7 +34,7 @@ local function htmlComment(commented)
 	end
 end
 
-local function html5Comment(line)
+local function html5Comment(line, syntax_name)
 	if string.find(syntax_name, "html") then
 		htmlComment(check_comment(line, "<!--"))
 	elseif string.find(syntax_name, "javaScript") then
@@ -80,7 +80,7 @@ local function comment(type, syntax_name, line)
 	elseif contains({"python", "r", "ruby"}, type) then
 		hashComment(check_comment(line, "#"))
 	elseif type == "html" then
-		html5Comment(line, type)
+		html5Comment(line, syntax_name)
 	else
 		doubleSlashComment(check_comment(line, "//"))
 	end
