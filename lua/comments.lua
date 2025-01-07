@@ -9,7 +9,7 @@ local function comment_based_on_context()
 		lua = function()
 			vim.cmd("normal! I--")
 			--vim.fn.setpos('.', save_pos)
-			vim.cmd("normal! <Esc>")
+			--vim.cmd("normal! <Esc>")
 		end
 	}
 
