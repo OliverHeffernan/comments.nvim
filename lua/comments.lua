@@ -21,6 +21,7 @@ local function comment_based_on_context()
 		local syntax = vim.fn.synstack(vim.fn.line("."), vim.fn.col("."))
 		local syntax_name = (#syntax == 0) and "" or vim.fn.synIDattr(syntax[#syntax], "name")
 		local filetype = vim.bo.filetype
+		vim.notify(filetype)
 		local line = vim.fn.getline(".")
 
 		local filetype_action = {
