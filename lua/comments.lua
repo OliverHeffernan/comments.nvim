@@ -38,7 +38,7 @@ local function htmlComment(commented)
 		vim.cmd("normal! $3x")
 	else
 		vim.cmd("normal! I<!--")
-		vim.cmd("normal! A-->')
+		vim.cmd("normal! A-->")
 	end
 end
 
