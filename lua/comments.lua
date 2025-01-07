@@ -6,27 +6,27 @@ local function comment_based_on_context()
 	local filetype = vim.bo.filetype
 	local line = vim.fn.getline(".")
 	local is_commented = line:match("^%s*--") -- check if line is already commented, matching if it starts with -- with optional spaces
+	local mode = vim.api.nvim_get_mode().mode
 	
-	local filetype_action = {
-		lua = function()
-			if is_commented then
-				vim.cmd("normal! ^xx")
-				vim.fn.setpos('.', save_pos)
-			else
-				vim.cmd("normal! I--")
-				vim.fn.setpos('.', save_pos)
-				--vim.cmd("normal! <Esc>")
+	if mode == "n" or mode == "i" then
+		local filetype_action = {
+			lua = function()
+				if is_commented then
+					vim.cmd("normal! I--")
+					vim.fn.setpos('.', save_pos)
+				else
+					vim.cmd("normal! ^xx")
+					vim.fn.setpos('.', save_pos)
+				end
 			end
-		end
-	}
+		}
+	end
 
 	if filetype_action[filetype] then
 		filetype_action[filetype]()
 	end
-	--vim.notify("Current syntax: " .. syntax_name)
 end
 
---vim.api.nvim_set_keymap("n", "<C-k>", [[<Cmd>lua require('comments').comment_based_on_context()<CR>]], { noremap = true, silent = true })
 
 vim.api.nvim_create_user_command('Comment', function()
 	comment_based_on_context()
