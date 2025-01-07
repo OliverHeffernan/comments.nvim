@@ -79,7 +79,7 @@ local function comment(type, syntax_name, line)
 		doubleDashComment(check_comment(line, "--")) 
 	elseif contains({"python", "r", "ruby"}, type) then
 		hashComment(check_comment(line, "#"))
-	else if type == "html" then
+	elseif type == "html" then
 		html5Comment(line, type)
 	else
 		doubleSlashComment(check_comment(line, "//"))
