@@ -101,6 +101,8 @@ local function comment_based_on_context()
 		vim.notify(syntax_name)
 		local line = vim.fn.getline(".")
 		comment(filetype, syntax_name, line)
+	end
+end
 		--[[
 		local filetype_action = {
 			lua = function()
@@ -179,9 +181,6 @@ local function comment_based_on_context()
 		end
 		]]
 
-
-	end
-end
 
 
 
