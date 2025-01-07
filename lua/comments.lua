@@ -1,7 +1,17 @@
-local function check_comment(str)
+local function check_comment(str, type)
 	local trimmed = str:match("^%s*(.-)$")
+	local commentMarker = "//"
 
-	if trimmed:sub(1, 2) == "--" then
+	if type == "lua" then
+		commentMarker = "--"
+		--if trimmed:sub(1, 2) == "--" then
+			--return true
+		--else
+			--return false
+		--end
+	end
+
+	if trimmed:sub(1, #commentMarker) == commentMarker then
 		return true
 	else
 		return false
