@@ -19,7 +19,11 @@ local function comment_based_on_context()
 	--vim.notify("Current syntax: " .. syntax_name)
 end
 
-vim.api.nvim_set_keymap("n", "<C-k>", [[<Cmd>lua require('comments').comment_based_on_context()<CR>]], { noremap = true, silent = true })
+--vim.api.nvim_set_keymap("n", "<C-k>", [[<Cmd>lua require('comments').comment_based_on_context()<CR>]], { noremap = true, silent = true })
+
+vim.api.nvim_create_user_command('Comment', function()
+	comment_based_on_context()
+end, {})
 
 return {
 	comment_based_on_context = comment_based_on_context
