@@ -1,4 +1,4 @@
-------local function check_comment(str, type)
+local function check_comment(str, type)
 	local trimmed = str:match("^%s*(.-)$")
 	local commentMarker = "//"
 
