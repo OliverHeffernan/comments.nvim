@@ -40,7 +40,6 @@ local function html5Comment(line, syntax_name)
 	elseif string.find(syntax_name, "javaScript") then
 		doubleSlashComment(check_comment(line, "//"))
 	elseif string.find(syntax_name, "css") then
-		type = "css"
 		cssComment(check_comment(line, "/*"))
 	else
 		htmlComment(check_comment(line, "<!--"))
