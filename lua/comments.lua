@@ -3,40 +3,50 @@ local function check_comment(str, type)
 	local commentMarker = "//"
 	if type == "lua" then
 		commentMarker = "--"
-		--if trimmed:sub(1, 2) == "--" then
-			--return true
-		--else
-			--return false
-		--end
+	elseif type == "html" then
+		commentMarker = "<!--"
 	end
-	vim.notify("'" .. trimmed:sub(1, #commentMarker) .. "'")
-	vim.notify(tostring(#commentMarker))
-	vim.notify("'" .. commentMarker .. "'")
+	--vim.notify("'" .. trimmed:sub(1, #commentMarker) .. "'")
+	--vim.notify(tostring(#commentMarker))
+	--vim.notify("'" .. commentMarker .. "'")
 	return trimmed:sub(1, #commentMarker) == commentMarker
 end
 
 local function comment_based_on_context()
 	--vim.notify("Function Triggered!")
-	local save_pos = vim.fn.getpos(".")
-	local syntax = vim.fn.synstack(vim.fn.line("."), vim.fn.col("."))
-	local syntax_name = (#syntax == 0) and "" or vim.fn.synIDattr(syntax[#syntax], "name")
-	local filetype = vim.bo.filetype
-	local line = vim.fn.getline(".")
+	
+	local mode = vim.api.nvim_get_mode().mode
+	if mode == 'n' or mode == 'c' then
+		local save_pos = vim.fn.getpos(".")
+		local syntax = vim.fn.synstack(vim.fn.line("."), vim.fn.col("."))
+		local syntax_name = (#syntax == 0) and "" or vim.fn.synIDattr(syntax[#syntax], "name")
+		local filetype = vim.bo.filetype
+		local line = vim.fn.getline(".")
 
-	local filetype_action = {
-		lua = function()
-			if check_comment(line, filetype) then
-				vim.cmd("normal! ^xx")
-				vim.fn.setpos('.', save_pos)
-			else
-				vim.cmd("normal! I--")
-				vim.fn.setpos('.', save_pos)
+		local filetype_action = {
+			lua = function()
+				if check_comment(line, filetype) then
+					vim.cmd("normal! ^xx")
+					vim.fn.setpos('.', save_pos)
+				else
+					vim.cmd("normal! I--")
+					vim.fn.setpos('.', save_pos)
+				end
 			end
-		end
-	}
+			vue = function()
+				local html = syntax_name.find("html")
+				if html and check_comment(line, "html") then
+					vim.cmd("normal! I<!--")
+					vim.cmd("normal! A-->")
+					vim.fn.setpos('.', save_pos)
+				end
+			end
 
-	if filetype_action[filetype] then
-		filetype_action[filetype]()
+		}
+
+		if filetype_action[filetype] then
+			filetype_action[filetype]()
+		end
 	end
 end
 
