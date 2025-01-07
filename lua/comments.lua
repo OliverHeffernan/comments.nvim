@@ -5,15 +5,14 @@ local function comment_based_on_context()
 	local syntax_name = (#syntax == 0) and "" or vim.fn.synIDattr(syntax[#syntax], "name")
 	local filetype = vim.bo.filetype
 	local line = vim.fn.getline(".")
-	local is_commented = line:match("^%s*--") -- check if line is already commented, matching if it starts with -- with optional spaces
 
 	local filetype_action = {
 		lua = function()
-			if is_commented then
-				vim.cmd("normal! I--")
+			if check_comment(line) then
+				vim.cmd("normal! ^xx")
 				vim.fn.setpos('.', save_pos)
 			else
-				vim.cmd("normal! ^xx")
+				vim.cmd("normal! I--")
 				vim.fn.setpos('.', save_pos)
 			end
 		end
@@ -21,6 +20,16 @@ local function comment_based_on_context()
 
 	if filetype_action[filetype] then
 		filetype_action[filetype]()
+	end
+end
+
+local function check_comment(str)
+	local trimmed = str:match("^%s*(.-)$")
+
+	if trimmed:sub(1, 2) == "--" then
+		return true
+	else
+		return false
 	end
 end
 
