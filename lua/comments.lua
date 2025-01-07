@@ -9,5 +9,5 @@ end
 vim.api.nvim_set_keymap("n", "<C-/>", [[<Cmd>lua require('comments').lua comment_based_on_context()<CR>]], { noremap = true, silent = true })
 
 return {
-	comment_basedon_context = comment_based_on_context
+	comment_based_on_context = comment_based_on_context
 }
