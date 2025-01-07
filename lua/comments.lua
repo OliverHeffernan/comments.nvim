@@ -1,7 +1,6 @@
 local function check_comment(str, type)
 	local trimmed = str:match("^%s*(.-)$")
 	local commentMarker = "//"
-
 	if type == "lua" then
 		commentMarker = "--"
 		--if trimmed:sub(1, 2) == "--" then
@@ -26,7 +25,7 @@ local function comment_based_on_context()
 
 	local filetype_action = {
 		lua = function()
-			if check_comment(line) then
+			if check_comment(line, filetype) then
 				vim.cmd("normal! ^xx")
 				vim.fn.setpos('.', save_pos)
 			else
