@@ -81,7 +81,7 @@ local function comment_based_on_context()
 			end,
 			javaScript = function()
 				javaScriptComment(check_comment(line, "javaScript"))
-			end
+			end,
 			css = function()
 				cssComment(check_comment(line, "css"))
 			end
