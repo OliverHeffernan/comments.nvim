@@ -54,7 +54,7 @@ local function comment_based_on_context()
 				end
 			end,
 			vue = function()
-				local html = find(syntax_name, "html")
+				local html = string.find(syntax_name, "html")
 				if html and check_comment(line, "html") then
 					vim.cmd("normal! I<!--")
 					vim.cmd("normal! A-->")
@@ -63,12 +63,12 @@ local function comment_based_on_context()
 			end,
 			html = function()
 				local type = "html"
-				if find(syntax_name, "html") then
+				if string.find(syntax_name, "html") then
 					type = "html"
-				elseif find(syntax_name, "javaScript") then
+				elseif string.find(syntax_name, "javaScript") then
 					type = "javaScript"
 					javaScriptComment(check_comment(line, type))
-				elseif find(syntax_name, "css") then
+				elseif string.find(syntax_name, "css") then
 					type = "css"
 					cssComment(check_comment(line, type))
 				else
