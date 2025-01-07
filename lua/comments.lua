@@ -8,7 +8,7 @@ local function comment_based_on_context()
 	local filetype_action = {
 		lua = function()
 			vim.cmd("normal! I--")
-			vim.fn.setpos('.', save_pos)
+			--vim.fn.setpos('.', save_pos)
 			vim.cmd("normal! <Esc>")
 		end
 	}
