@@ -1,3 +1,13 @@
+local function check_comment(str)
+	local trimmed = str:match("^%s*(.-)$")
+
+	if trimmed:sub(1, 2) == "--" then
+		return true
+	else
+		return false
+	end
+end
+
 local function comment_based_on_context()
 	--vim.notify("Function Triggered!")
 	local save_pos = vim.fn.getpos(".")
@@ -23,15 +33,6 @@ local function comment_based_on_context()
 	end
 end
 
-local function check_comment(str)
-	local trimmed = str:match("^%s*(.-)$")
-
-	if trimmed:sub(1, 2) == "--" then
-		return true
-	else
-		return false
-	end
-end
 
 
 vim.api.nvim_create_user_command('Comment', function()
