@@ -10,7 +10,7 @@ local function check_comment(str, type)
 			--return false
 		--end
 	end
-
+	vim.notify(trimmed:sub(1, #commentMarker))
 	if trimmed:sub(1, #commentMarker) == commentMarker then
 		return true
 	else
