@@ -1,4 +1,4 @@
-local function check_comment(str, type)
+------local function check_comment(str, type)
 	local trimmed = str:match("^%s*(.-)$")
 	local commentMarker = "//"
 
@@ -10,8 +10,9 @@ local function check_comment(str, type)
 			--return false
 		--end
 	end
-	vim.notify(trimmed:sub(1, #commentMarker))
+	vim.notify("'" .. trimmed:sub(1, #commentMarker) .. "'")
 	vim.notify(tostring(#commentMarker))
+	vim.notify("'" .. commentMarker .. "'")
 	return trimmed:sub(1, #commentMarker) == commentMarker
 end
 
