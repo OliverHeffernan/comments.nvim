@@ -1,20 +1,12 @@
-local function check_comment(str, type)
+local function check_comment(str, commentMarker)
 	local trimmed = str:match("^%s*(.-)$")
-	local commentMarker = "//"
-	if type == "lua" then
-		commentMarker = "--"
-	elseif type == "html" then
-		commentMarker = "<!--"
-	elseif type == "css" then
-		commentMarker = "/*"
-	end
 	--vim.notify("'" .. trimmed:sub(1, #commentMarker) .. "'")
 	--vim.notify(tostring(#commentMarker))
 	--vim.notify("'" .. commentMarker .. "'")
 	return trimmed:sub(1, #commentMarker) == commentMarker
 end
 
-local function javaScriptComment(commented)
+local function doubleSlashComment(commented)
 	if commented then
 		vim.cmd("normal! ^xx")
 	else
@@ -35,11 +27,65 @@ end
 local function htmlComment(commented)
 	if commented then
 		vim.cmd("normal! ^4x")
-		vim.cmd("normal! $3x")
+		vim.cmd("normal! $xxx")
 	else
 		vim.cmd("normal! I<!--")
 		vim.cmd("normal! A-->")
 	end
+end
+
+local function html5Comment(line)
+	if string.find(syntax_name, "html") then
+		htmlComment(check_comment(line, "<!--"))
+	elseif string.find(syntax_name, "javaScript") then
+		doubleSlashComment(check_comment(line, "//"))
+	elseif string.find(syntax_name, "css") then
+		type = "css"
+		cssComment(check_comment(line, "/*"))
+	else
+		htmlComment(check_comment(line, "<!--"))
+	end
+end
+
+local function hashComment(commented)
+	if commented then
+		vim.cmd("normal! ^x")
+	else
+		vim.cmd("normal! I#")
+	end
+end
+
+local function contains(table, value)
+    for _, v in ipairs(table) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
+
+local function doubleDashComment(commented)
+	if commented then
+		vim.cmd("normal! ^xx")
+		vim.fn.setpos('.', save_pos)
+	else
+		vim.cmd("normal! I--")
+		vim.fn.setpos('.', save_pos)
+	end
+end
+
+local function comment(type, syntax_name, line)
+	if contains({"lua", "haskell", "sql"}, type) then
+		doubleDashComment(check_comment(line, "--")) 
+	elseif contains({"python", "r", "ruby"}, type) then
+		hashComment(check_comment(line, "#"))
+	else if type == "html" then
+		html5Comment(line, type)
+	else
+		doubleSlashComment(check_comment(line, "//"))
+	end
+
+	vim.fn.setpos('.', save_pos)
 end
 
 local function comment_based_on_context()
@@ -54,9 +100,13 @@ local function comment_based_on_context()
 		vim.notify(filetype)
 		vim.notify(syntax_name)
 		local line = vim.fn.getline(".")
-
+		comment(filetype, syntax_name, line)
+		--[[
 		local filetype_action = {
 			lua = function()
+				doubleDashComment(check_comment(line, 
+			end,
+			Haskell = function()
 				if check_comment(line, filetype) then
 					vim.cmd("normal! ^xx")
 					vim.fn.setpos('.', save_pos)
@@ -91,16 +141,45 @@ local function comment_based_on_context()
 			javaScript = function()
 				javaScriptComment(check_comment(line, "javaScript"))
 			end,
+			javascript = function()
+				javaScriptComment(check_comment(line, "javaScript"))
 			css = function()
 				cssComment(check_comment(line, "css"))
-			end
+			end,
+			python = function()
+				pythonComment(check_comment(line, "python"))
+			end,
+			r = function()
+				pythonComment(check_comment(line, "python"))
+			end,
+			c = function ()
+				javaScriptComment(check_comment(line, "javaScript"))
+			end,
+			cpp = function ()
+				javaScriptComment(check_comment(line, "javaScript"))
+			end,
+			java = function()
+				javaScriptComment(check_comment(line, "javaScript"))
+			end,
+			ruby = function()
+				pythonComment(check_comment(line, "python"))
+			end,
+			typescript = function()
+				javaScriptComment(check_comment(line, "javaScript"))
+			end,
+			kotlin = function()
+				javaScriptComment(check_comment(line, "javaScript"))
+			end,
 		}
+
+
 
 		if filetype_action[filetype] then
 			filetype_action[filetype]()
 		end
+		]]
 
-		vim.fn.setpos('.', save_pos)
+
 	end
 end
 
