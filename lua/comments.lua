@@ -32,7 +32,7 @@ local function comment_based_on_context()
 					vim.cmd("normal! I--")
 					vim.fn.setpos('.', save_pos)
 				end
-			end
+			end,
 			vue = function()
 				local html = syntax_name.find("html")
 				if html and check_comment(line, "html") then
