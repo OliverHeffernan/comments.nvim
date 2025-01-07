@@ -11,7 +11,7 @@ local function check_comment(str, type)
 		--end
 	end
 	vim.notify(trimmed:sub(1, #commentMarker))
-	vim.notify(#commentMarker)
+	vim.notify(tostring(#commentMarker))
 	return trimmed:sub(1, #commentMarker) == commentMarker
 end
 
