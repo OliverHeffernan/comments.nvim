@@ -85,6 +85,7 @@ end
 local function comment(type, syntax_name, line, save_pos)
 	local commentMarker = "//"
 	local commented
+	vim.notify(tostring(#line))
 	if contains({"lua", "haskell", "sql"}, type) then
 		commented = check_comment(line, "--")
 		doubleDashComment(commented) 
