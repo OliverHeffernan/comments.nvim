@@ -3,7 +3,7 @@ Comments.nvim is a plugin for neovim, which allows you to comment any line of co
 
 ## Installation
 You can install this using lazy.nvim
-```
+```lua
 {
     "OliverHeffernan/comments.nvim",
     config = function()
