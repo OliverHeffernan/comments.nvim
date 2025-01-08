@@ -85,7 +85,7 @@ end
 local function comment(type, syntax_name, line, save_pos)
 	local commentMarker = "//"
 	local commented
-	vim.notify(tostring(#line))
+	local lineLength = #line
 	if contains({"lua", "haskell", "sql"}, type) then
 		commented = check_comment(line, "--")
 		doubleDashComment(commented) 
@@ -103,7 +103,10 @@ local function comment(type, syntax_name, line, save_pos)
 	end
 
 	vim.fn.setpos('.', save_pos)
-	if commented then
+	-- readjusting the position based on the length of the marker, and whether the line was empty to begin with
+	if lineLength == 0 then
+		vim.cmd("normal! $")
+	elseif commented then
 		vim.cmd("normal! " .. tostring(#commentMarker) .. "h")
 	else
 		vim.cmd("normal! " .. tostring(#commentMarker) .. "l")
