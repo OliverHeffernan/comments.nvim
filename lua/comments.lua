@@ -1,11 +1,13 @@
+-- function to check if a string is a comment, given the string and the comment marker
+-- the comment marker is a string that is used to create a comment in any given language, for example '//' for javascript
+-- returns true or false
 local function check_comment(str, commentMarker)
 	local trimmed = str:match("^%s*(.-)$")
-	--vim.notify("'" .. trimmed:sub(1, #commentMarker) .. "'")
-	--vim.notify(tostring(#commentMarker))
-	--vim.notify("'" .. commentMarker .. "'")
 	return trimmed:sub(1, #commentMarker) == commentMarker
 end
 
+-- commands for executing the comment or uncomment
+-- commented is usually passed in as a result of the check_comment function
 local function doubleSlashComment(commented)
 	if commented then
 		vim.cmd("normal! ^xx")
@@ -34,13 +36,18 @@ local function htmlComment(commented)
 	end
 end
 
+-- comment used to do different types of comments within html files, as there could be css, or javascript within an html file
 local function html5Comment(line, syntax_name)
+	-- check if the current line is an html line
 	if string.find(syntax_name, "html") then
 		htmlComment(check_comment(line, "<!--"))
+	-- else check if the current line is an javaScript line
 	elseif string.find(syntax_name, "javaScript") then
 		doubleSlashComment(check_comment(line, "//"))
+	-- else check if the current line is an css line
 	elseif string.find(syntax_name, "css") then
 		cssComment(check_comment(line, "/*"))
+	-- if all of those checks fail, then default to an html comment
 	else
 		htmlComment(check_comment(line, "<!--"))
 	end
@@ -54,15 +61,6 @@ local function hashComment(commented)
 	end
 end
 
-local function contains(table, value)
-    for _, v in ipairs(table) do
-        if v == value then
-            return true
-        end
-    end
-    return false
-end
-
 local function doubleDashComment(commented)
 	if commented then
 		vim.cmd("normal! ^xx")
@@ -73,7 +71,18 @@ local function doubleDashComment(commented)
 	end
 end
 
-local function comment(type, syntax_name, line)
+-- used in the comment function to check what type of comment should be executed based on the filetype
+local function contains(table, value)
+    for _, v in ipairs(table) do
+        if v == value then
+            return true
+        end
+    end
+    return false
+end
+
+-- executes one of the comment command depending on the file type
+local function comment(type, syntax_name, line, save_pos)
 	if contains({"lua", "haskell", "sql"}, type) then
 		doubleDashComment(check_comment(line, "--")) 
 	elseif contains({"python", "r", "ruby"}, type) then
@@ -87,102 +96,27 @@ local function comment(type, syntax_name, line)
 	vim.fn.setpos('.', save_pos)
 end
 
+-- this function is called when the user enters the command ":Comment"
 local function comment_based_on_context()
-	--vim.notify("Function Triggered!")
-	
+	-- the current mode in neovim
 	local mode = vim.api.nvim_get_mode().mode
+	-- check if the user is either in normal, or command line mode
 	if mode == 'n' or mode == 'c' then
+		-- record the current cursor position so that we can return to it once the command has been executed
 		local save_pos = vim.fn.getpos(".")
+		-- get the syntax name, this helps us to check if there is javascript or css within a html file
 		local syntax = vim.fn.synstack(vim.fn.line("."), vim.fn.col("."))
 		local syntax_name = (#syntax == 0) and "" or vim.fn.synIDattr(syntax[#syntax], "name")
+		-- get the file type
 		local filetype = vim.bo.filetype
-		vim.notify(filetype)
-		vim.notify(syntax_name)
+		-- get the text from the currently selected line so that we can enter it into the check comment function later
 		local line = vim.fn.getline(".")
-		comment(filetype, syntax_name, line)
+		-- pass all of these props into the comment function
+		comment(filetype, syntax_name, line, save_pos)
 	end
 end
-		--[[
-		local filetype_action = {
-			lua = function()
-				doubleDashComment(check_comment(line, 
-			end,
-			Haskell = function()
-				if check_comment(line, filetype) then
-					vim.cmd("normal! ^xx")
-					vim.fn.setpos('.', save_pos)
-				else
-					vim.cmd("normal! I--")
-					vim.fn.setpos('.', save_pos)
-				end
-			end,
-			vue = function()
-				local html = string.find(syntax_name, "html")
-				if html and check_comment(line, "html") then
-					vim.cmd("normal! I<!--")
-					vim.cmd("normal! A-->")
-					vim.fn.setpos('.', save_pos)
-				end
-			end,
-			html = function()
-				local type = "html"
-				if string.find(syntax_name, "html") then
-					type = "html"
-					htmlComment(check_comment(line, type))
-				elseif string.find(syntax_name, "javaScript") then
-					type = "javaScript"
-					javaScriptComment(check_comment(line, type))
-				elseif string.find(syntax_name, "css") then
-					type = "css"
-					cssComment(check_comment(line, type))
-				else
-					htmlComment(check_comment(line, type))
-				end
-			end,
-			javaScript = function()
-				javaScriptComment(check_comment(line, "javaScript"))
-			end,
-			javascript = function()
-				javaScriptComment(check_comment(line, "javaScript"))
-			css = function()
-				cssComment(check_comment(line, "css"))
-			end,
-			python = function()
-				pythonComment(check_comment(line, "python"))
-			end,
-			r = function()
-				pythonComment(check_comment(line, "python"))
-			end,
-			c = function ()
-				javaScriptComment(check_comment(line, "javaScript"))
-			end,
-			cpp = function ()
-				javaScriptComment(check_comment(line, "javaScript"))
-			end,
-			java = function()
-				javaScriptComment(check_comment(line, "javaScript"))
-			end,
-			ruby = function()
-				pythonComment(check_comment(line, "python"))
-			end,
-			typescript = function()
-				javaScriptComment(check_comment(line, "javaScript"))
-			end,
-			kotlin = function()
-				javaScriptComment(check_comment(line, "javaScript"))
-			end,
-		}
 
-
-
-		if filetype_action[filetype] then
-			filetype_action[filetype]()
-		end
-		]]
-
-
-
-
+-- creates the command ":Comment"
 vim.api.nvim_create_user_command('Comment', function()
 	comment_based_on_context()
 end, {})
