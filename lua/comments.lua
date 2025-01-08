@@ -40,16 +40,16 @@ end
 local function html5Comment(line, syntax_name)
 	-- check if the current line is an html line
 	if string.find(syntax_name, "html") then
-		htmlComment(check_comment(line, "<!--"))
+		htmlComment(check_comment(line, "<!-- "))
 	-- else check if the current line is an javaScript line
 	elseif string.find(syntax_name, "javaScript") then
-		doubleSlashComment(check_comment(line, "//"))
+		doubleSlashComment(check_comment(line, "// "))
 	-- else check if the current line is an css line
 	elseif string.find(syntax_name, "css") then
-		cssComment(check_comment(line, "/*"))
+		cssComment(check_comment(line, "/* "))
 	-- if all of those checks fail, then default to an html comment
 	else
-		htmlComment(check_comment(line, "<!--"))
+		htmlComment(check_comment(line, "<!-- "))
 	end
 end
 
@@ -83,33 +83,33 @@ end
 
 -- executes one of the comment command depending on the file type
 local function comment(type, syntax_name, line, save_pos)
-	local commentMarker = "//"
+	local commentMarker = "// "
 	local commented
 	local lineLength = #line
 	if contains({"lua", "haskell", "sql"}, type) then
-		commented = check_comment(line, "--")
+		commented = check_comment(line, "-- ")
 		doubleDashComment(commented) 
 		commentMarker = "--"
 	elseif contains({"python", "r", "ruby"}, type) then
-		commented = check_comment(line, "#")
+		commented = check_comment(line, "# ")
 		hashComment(commented)
 		commentMarker = "#"
 	elseif type == "html" then
-		commented = check_comment(line, "<!--")
+		commented = check_comment(line, "<!-- ")
 		html5Comment(line, syntax_name)
 		commentMarker = "<!--"
 	else
-		doubleSlashComment(check_comment(line, "//"))
+		doubleSlashComment(check_comment(line, "// "))
 	end
 
 	-- readjusting the position based on the length of the marker, and whether the line was empty to begin with
-	if lineLength == 0 then
+	--if lineLength == 0 then
 		--vim.cmd("normal! A ")
 		--vim.cmd("normal! ll")
 		--add a space to the end of the current line
-		vim.api.nvim_set_current_line(line .. ' ')
-		vim.cmd("normal! A")
-	elseif commented then
+		--vim.api.nvim_set_current_line(line .. ' ')
+		--vim.cmd("normal! A")
+	if commented then
 		vim.fn.setpos('.', save_pos)
 		vim.cmd("normal! " .. tostring(#commentMarker) .. "h")
 	else
