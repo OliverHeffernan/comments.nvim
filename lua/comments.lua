@@ -84,13 +84,17 @@ end
 -- executes one of the comment command depending on the file type
 local function comment(type, syntax_name, line, save_pos)
 	local commentMarker = "//"
+	local commented
 	if contains({"lua", "haskell", "sql"}, type) then
-		doubleDashComment(check_comment(line, "--")) 
+		commented = check_comment(line, "--")
+		doubleDashComment(commented) 
 		commentMarker = "--"
 	elseif contains({"python", "r", "ruby"}, type) then
-		hashComment(check_comment(line, "#"))
+		commented = check_comment(line, "#")
+		hashComment(commented)
 		commentMarker = "#"
 	elseif type == "html" then
+		commented = check_comment(line, "<!--")
 		html5Comment(line, syntax_name)
 		commentMarker = "<!--"
 	else
@@ -98,7 +102,11 @@ local function comment(type, syntax_name, line, save_pos)
 	end
 
 	vim.fn.setpos('.', save_pos)
-	vim.cmd("normal! " .. tostring(#commentMarker) .. "l")
+	if commented then
+		vim.cmd("normal! " .. tostring(#commentMarker) .. "h")
+	else
+		vim.cmd("normal! " .. tostring(#commentMarker) .. "l")
+	end
 end
 
 -- this function is called when the user enters the command ":Comment"
