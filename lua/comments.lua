@@ -105,6 +105,7 @@ local function comment(type, syntax_name, line, save_pos)
 	-- readjusting the position based on the length of the marker, and whether the line was empty to begin with
 	if lineLength == 0 then
 		vim.cmd("normal! A ")
+		vim.cmd("normal! ll")
 	elseif commented then
 		vim.fn.setpos('.', save_pos)
 		vim.cmd("normal! " .. tostring(#commentMarker) .. "h")
