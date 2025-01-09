@@ -45,7 +45,7 @@ local function html5Comment(line, syntax_name)
 	-- else check if the current line is an javaScript line
 	elseif string.find(syntax_name, "javaScript") then
 		doubleSlashComment(check_comment(line, "//"))
-		return "<!--"
+		return "//"
 	-- else check if the current line is an css line
 	elseif string.find(syntax_name, "css") then
 		cssComment(check_comment(line, "/*"))
