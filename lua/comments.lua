@@ -123,6 +123,7 @@ local function comment_based_on_context()
 		-- get the syntax name, this helps us to check if there is javascript or css within a html file
 		local syntax = vim.fn.synstack(vim.fn.line("."), vim.fn.col("."))
 		local syntax_name = (#syntax == 0) and "" or vim.fn.synIDattr(syntax[#syntax], "name")
+		vim.notify(syntax_name)
 		-- get the file type
 		local filetype = vim.bo.filetype
 		-- get the text from the currently selected line so that we can enter it into the check comment function later
