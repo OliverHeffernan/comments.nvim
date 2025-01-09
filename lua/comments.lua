@@ -41,15 +41,19 @@ local function html5Comment(line, syntax_name)
 	-- check if the current line is an html line
 	if string.find(syntax_name, "html") then
 		htmlComment(check_comment(line, "<!--"))
+		return "<!--"
 	-- else check if the current line is an javaScript line
 	elseif string.find(syntax_name, "javaScript") then
 		doubleSlashComment(check_comment(line, "//"))
+		return "<!--"
 	-- else check if the current line is an css line
 	elseif string.find(syntax_name, "css") then
 		cssComment(check_comment(line, "/*"))
+		return "/*"
 	-- if all of those checks fail, then default to an html comment
 	else
 		htmlComment(check_comment(line, "<!--"))
+		return "<!--"
 	end
 end
 
@@ -100,8 +104,8 @@ local function comment(type, syntax_name, line, save_pos)
 		commentMarker = "/*"
 	elseif type == "html" then
 		commented = check_comment(line, "<!--")
-		html5Comment(line, syntax_name)
-		commentMarker = "<!--"
+		commentMarker = html5Comment(line, syntax_name)
+		--commentMarker = "<!--"
 	else
 		doubleSlashComment(check_comment(line, "//"))
 	end
