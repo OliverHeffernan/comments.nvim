@@ -94,6 +94,10 @@ local function comment(type, syntax_name, line, save_pos)
 		commented = check_comment(line, "#")
 		hashComment(commented)
 		commentMarker = "#"
+	elseif type == "css" then
+		commented = check_comment(line, "/*")
+		cssComment(commented)
+		commentMarker = "/*"
 	elseif type == "html" then
 		commented = check_comment(line, "<!--")
 		html5Comment(line, syntax_name)
