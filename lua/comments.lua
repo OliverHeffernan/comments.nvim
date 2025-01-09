@@ -46,7 +46,7 @@ local function html5Comment(line, syntax_name)
 		doubleSlashComment(check_comment(line, "//"))
 	-- else check if the current line is an css line
 	elseif string.find(syntax_name, "css") then
-		cssComment(check_comment(line, "/* "))
+		cssComment(check_comment(line, "/*"))
 	-- if all of those checks fail, then default to an html comment
 	else
 		htmlComment(check_comment(line, "<!--"))
