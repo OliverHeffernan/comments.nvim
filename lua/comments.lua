@@ -143,19 +143,21 @@ end
 
 -- creates the command ":Comment"
 vim.api.nvim_create_user_command('Comment',
-	function(opts)
-		if opts.range == 0 then
+	function(args)
+		local opts = args or {}
+		local range = opts.range or 0
+		local line1 = opts.line1 or vim.fn.line(".")
+		local line2 = opts.line2 or vim.fn.line(".")
+		if range == 0 then
 			comment_based_on_context()
 		else
-			local start_line = opts.line1
-			local end_line = opts.line2
 			local save_pos = vim.fn.getpos(".")
-			for line_num = start_line, end_line do
+			for line_num = line1, line2 do
 				vim.fn.setpos('.', {0, line_num, 1, 0})
 				vim.cmd("normal! :Comment<CR>")
 			end
 
-			vim.fn.setpos('.', {0, start_line, save_pos[3], 0})
+			vim.fn.setpos('.', {0, line1, save_pos[3], 0})
 		end
 	end
 , {})
