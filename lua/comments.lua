@@ -160,7 +160,7 @@ vim.api.nvim_create_user_command('Comment',
 			vim.fn.setpos('.', {0, line1, save_pos[3], 0})
 		end
 	end
-, {})
+, {range = true})
 
 return {
 	comment_based_on_context = comment_based_on_context
