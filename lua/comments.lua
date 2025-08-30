@@ -138,12 +138,27 @@ local function comment_based_on_context()
 		-- pass all of these props into the comment function
 		comment(filetype, syntax_name, line, save_pos)
 	end
+
 end
 
 -- creates the command ":Comment"
-vim.api.nvim_create_user_command('Comment', function()
-	comment_based_on_context()
-end, {})
+vim.api.nvim_create_user_command('Comment',
+	function()
+		if opts.range == 0 then
+			comment_based_on_context()
+		else
+			local start_line = opts.line1
+			local end_line = opts.line2
+			local save_pos = vim.fn.getpos(".")
+			for line_num = start_line, end_line do
+				vim.fn.setpos('.', {0, line_num, 1, 0})
+				vim.cmd("normal! :Comment<CR>")
+			end
+
+			vim.fn.setpos('.', {0, start_line, save_pos[3], 0})
+		end
+	end
+, {})
 
 return {
 	comment_based_on_context = comment_based_on_context
