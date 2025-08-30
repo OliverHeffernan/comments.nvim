@@ -144,13 +144,17 @@ end
 -- creates the command ":Comment"
 vim.api.nvim_create_user_command('Comment',
 	function(args)
+		-- get the range of the call
 		local opts = args or {}
 		local range = opts.range or 0
 		local line1 = opts.line1 or vim.fn.line(".")
 		local line2 = opts.line2 or vim.fn.line(".")
+		-- if the range is 0, toggle comments the current line
 		if range == 0 then
 			comment_based_on_context()
 		else
+			-- otherwise, toggle comments for each selected line.
+			-- and remember the current cursor position, so that we can preserve it.
 			local save_pos = vim.fn.getpos(".")
 
 			for line_num = line1, line2 do
@@ -158,7 +162,8 @@ vim.api.nvim_create_user_command('Comment',
 				comment_based_on_context()
 			end
 
-			vim.fn.setpos('.', {0, line1, save_pos[3], 0})
+			-- then go back to the original position
+			vim.fn.setpos('.', save_pos)
 		end
 	end
 , {range = true})
