@@ -143,7 +143,7 @@ end
 
 -- creates the command ":Comment"
 vim.api.nvim_create_user_command('Comment',
-	function()
+	function(opts)
 		if opts.range == 0 then
 			comment_based_on_context()
 		else
