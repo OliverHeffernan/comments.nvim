@@ -152,9 +152,11 @@ vim.api.nvim_create_user_command('Comment',
 			comment_based_on_context()
 		else
 			local save_pos = vim.fn.getpos(".")
-			vim.api.nvim_buf_call(0, function()
-					vim.cmd(string.format('%d,%dnormal! :call comment_based_on_context()<CR>', line1, line2))
-				  end)
+
+			for line_num = line1, line2 do
+				vim.fn.setpos('.', {0, line_num, 1, 0})
+				comment_based_on_context()
+			end
 
 			vim.fn.setpos('.', {0, line1, save_pos[3], 0})
 		end
